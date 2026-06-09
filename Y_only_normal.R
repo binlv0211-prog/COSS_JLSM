@@ -1,8 +1,8 @@
 library(pgdraw)
 library(LaplacesDemon)
 library(MASS)
-normal_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta_B,b_theta_B,
-                              theta_inf,start_adapt,Hmax,a,alpha0,alpha1){
+normal_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,alpha_H,a_sig,b_sig,a_theta_B,b_theta_B,
+                              theta_inf,start_adapt,Hmax,alpha0,alpha1){
   #  set.seed(my_seed)
   n = dim(Y)[1]
   q = dim(Y)[2]
@@ -30,7 +30,6 @@ normal_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta_B,b_t
   #  Y_hat = matrix(0,n,q)
   Z_hat = list()
   B_hat = list()
-  active_hat = list()
   sigma_hat = matrix(0,N_sample,q)
   m = 1
   for (run in 1:nrun){
@@ -79,7 +78,7 @@ normal_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta_B,b_t
       if (h == 1){
         v[h] = rbeta(1, shape1 = (Hmax + 1)**(delta_n) + sum(zta == h), shape2 = 1 + sum(zta > h))
       }else{
-        v[h] = rbeta(1, shape1 = a + sum(zta == h), shape2 = 1 + sum(zta > h))
+        v[h] = rbeta(1, shape1 = alpha_H + sum(zta == h), shape2 = 1 + sum(zta > h))
       }
     }
     v[H] = 1
@@ -116,7 +115,7 @@ normal_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta_B,b_t
       } else if (H < Hmax) {
         # increase truncation by 1 and extend all variables, sampling from the prior/model
         H = H + 1
-        v[H - 1] = rbeta(1,shape1=a,shape2=1)
+        v[H - 1] = rbeta(1,shape1=alpha_H,shape2=1)
         v = c(v,1)
         w = rep(NA,H)
         w[1] = v[1]
@@ -132,14 +131,18 @@ normal_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta_B,b_t
     H_hat[run] = Hstar
     if((run > burn) &((run-burn) %% thin == 0)){
       gamma_hat[m,] = gamma_Y
-      B_hat[[m]] = B
-      Z_hat[[m]] = Z
-      active_hat[[m]] = which(zta > c(1:H))
+      if(Hstar>0){
+        B_hat[[m]] = B[1:Hstar,]
+        Z_hat[[m]] = Z[,1:Hstar]
+      }else{
+        B_hat[[m]] = B
+        Z_hat[[m]] = Z
+      }
       sigma_hat[m,] = 1 / inv_sigma
       m = m + 1
     }
   }
-  output = list("H" = H_hat,"Z" = Z_hat,"B" = B_hat,"active" = active_hat,
+  output = list("H" = H_hat,"Z" = Z_hat,"B" = B_hat,
                 "gamma" = gamma_hat,"sigma" = sigma_hat)
   return(output)
 }

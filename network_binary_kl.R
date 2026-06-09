@@ -80,6 +80,42 @@ network_briny_kf = function(A,Y,H,nrun,burn,thin){
   return(output)
 }
 
+network_briny_kf0 = function(A,Y,nrun,burn,thin){
+  n = dim(A)[1]
+  q = dim(Y)[2]
+  alpha = rnorm(n)
+  gamma_Y = rep(1,q)  
+  N_sample = ceiling((nrun - burn)/thin)
+  alpha_hat = matrix(0,N_sample,n)
+  gamma_hat = matrix(0,N_sample,q)
+  m = 1
+  for (run in 1:nrun){
+    theta_A = matrix(1,n,1)%*%matrix(alpha,1,n) + matrix(alpha,n,1) %*%matrix(1,1,n)
+    D_A = matrix(pgdraw(1, theta_A), nrow = n,ncol = n)
+    D_A = (D_A + t(D_A)) / 2
+    theta_Y = (matrix(1,n,1) %*% matrix(gamma_Y,1,q))
+    D_Y = matrix(pgdraw(1,theta_Y),nrow = n,ncol = q)
+    for(i in 1:n){
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      u_temp = A[i,] - 0.5 - D_A[i,] * (alpha)
+      u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
+      alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
+    }
+    si_g1 = apply(D_Y, 2, sum) + 1/100
+    sigma_gamma = diag(1 / si_g1)
+    u_gamma_temp = Y - 0.5 - D_Y
+    u_gamma = sigma_gamma %*% (apply(u_gamma_temp, 2, sum))
+    gamma_Y = mvrnorm(1, u_gamma, sigma_gamma)
+    if((run > burn) &((run-burn) %% thin == 0)){
+      gamma_hat[m,] = gamma_Y
+      alpha_hat[m,] = alpha
+      m = m+1
+    }
+  }
+  output = list("alpha" = alpha_hat,"gamma" = gamma_hat)
+  return(output)  
+}
+
 
 network_briny_kf_getZ = function(A,Y,gamma_Y,B,nrun,burn,thin){
   n = dim(A)[1]
@@ -123,5 +159,34 @@ network_briny_kf_getZ = function(A,Y,gamma_Y,B,nrun,burn,thin){
     }
   }
   output = list("alpha" = alpha_hat,"Z" = Z_hat)
+  return(output)
+}
+
+
+network_briny_kf0_getalpha = function(A,Y,gamma_Y,nrun,burn,thin){
+  n = dim(A)[1]
+  q = dim(Y)[2]
+  alpha = rnorm(n)  
+  N_sample = ceiling((nrun - burn)/thin)
+  alpha_hat = matrix(0,N_sample,n)
+  m = 1
+  for (run in 1:nrun){
+    theta_A = matrix(1,n,1)%*%matrix(alpha,1,n) + matrix(alpha,n,1) %*%matrix(1,1,n)
+    D_A = matrix(pgdraw(1, theta_A), nrow = n,ncol = n)
+    D_A = (D_A + t(D_A)) / 2
+    theta_Y = (matrix(1,n,1) %*% matrix(gamma_Y,1,q))
+    D_Y = matrix(pgdraw(1,theta_Y),nrow = n,ncol = q)
+    for(i in 1:n){
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      u_temp = A[i,] - 0.5 - D_A[i,] * (alpha)
+      u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
+      alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
+    }
+    if((run > burn) &((run-burn) %% thin == 0)){
+      alpha_hat[m,] = alpha
+      m = m+1
+    }
+  }
+  output = list("alpha" = alpha_hat)
   return(output)
 }

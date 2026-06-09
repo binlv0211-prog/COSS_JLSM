@@ -34,8 +34,34 @@ get_B = function(q,k,l,u,sample = F){
     return(B)
   }
   else{
-    return(matrix(runif(q*K),k,k))
+    return(matrix(runif(q*k),k,k))
   }
+}
+
+get_item_Y = function(Z,B,b1,b2,b3,b4){
+  b1_temp = outer(rep(1,n),b1)
+  b2_temp = outer(rep(1,n),b2)
+  b3_temp = outer(rep(1,n),b3)
+  b4_temp = outer(rep(1,n),b4)  
+  Psi = array(0,c(n,q,6))
+  P = array(0,c(n,q,5))
+  Psi[,,1] = 1
+  Psi[,,2] = exp(Z%*%B - b1_temp)/(1 + exp(Z%*%B - b1_temp))
+  Psi[,,3] = exp(Z%*%B - b2_temp)/(1 + exp(Z%*%B - b2_temp))
+  Psi[,,4] = exp(Z%*%B - b3_temp)/(1 + exp(Z%*%B - b3_temp))
+  Psi[,,5] = exp(Z%*%B - b4_temp)/(1 + exp(Z%*%B - b4_temp))
+  P[,,1] = Psi[,,1] - Psi[,,2]
+  P[,,2] = Psi[,,2] - Psi[,,3]
+  P[,,3] = Psi[,,3] - Psi[,,4]
+  P[,,4] = Psi[,,4] - Psi[,,5]
+  P[,,5] = Psi[,,5] - Psi[,,6]
+  Y = matrix(0,n,q)
+  for (i in 1:n) {
+    for (j in 1:q) {
+      Y[i,j] = sample(1:5,1,replace = T,prob = P[i,j,])
+    }
+  }
+  return(Y)
 }
 
 get_gamma = function(q){

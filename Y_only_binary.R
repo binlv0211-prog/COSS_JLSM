@@ -1,7 +1,7 @@
 library(pgdraw)
 library(LaplacesDemon)
 library(MASS)
-briny_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_theta_B,b_theta_B,theta_inf,start_adapt,Hmax,a,alpha0,alpha1){
+briny_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,alpha_H,a_theta_B,b_theta_B,theta_inf,start_adapt,Hmax,alpha0,alpha1){
   n = dim(Y)[1]
   q = dim(Y)[2]
   u = runif(nrun)
@@ -25,7 +25,6 @@ briny_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_theta_B,b_theta_B,theta_
   #  Y_hat = matrix(0,n,q)
   Z_hat = list()
   B_hat = list()
-  active_hat = list()
   sigma_hat = matrix(0,nrun,q)
   m = 1
   for (run in 1:nrun){
@@ -84,7 +83,7 @@ briny_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_theta_B,b_theta_B,theta_
       if (h == 1){
         v[h] = rbeta(1, shape1 = (Hmax + 1)**(delta_n) + sum(zta == h), shape2 = 1 + sum(zta > h))
       }else{
-        v[h] = rbeta(1, shape1 = a + sum(zta == h), shape2 = 1 + sum(zta > h))
+        v[h] = rbeta(1, shape1 = alpha_H + sum(zta == h), shape2 = 1 + sum(zta > h))
       }
     }
     v[H] = 1
@@ -109,21 +108,21 @@ briny_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_theta_B,b_theta_B,theta_
         # set truncation to Hstar[t] and subset all variables, keeping only active columns
         H = Hstar + 1
         w = c(w[active],1-sum(w[active]))
-        Z = cbind(Z[,active],rnorm(n))
+        Z = cbind(Z[,active],0.05 * rnorm(n))
         B = rbind(B[active,],c(rep(0,H-1),rnorm(q-H+1,0,theta_inf^(-1))))
         theta_inv_B = c(theta_inv_B[active],theta_inf^(-1))
         zta = c(zta[active],H-1)
       } else if (H < Hmax) {
         # increase truncation by 1 and extend all variables, sampling from the prior/model
         H = H + 1
-        v[H - 1] = rbeta(1,shape1=a,shape2=1)
+        v[H - 1] = rbeta(1,shape1=alpha_H,shape2=1)
         v = c(v,1)
         w = rep(NA,H)
         w[1] = v[1]
         for (h in 2:H){
           w[h] = v[h]*prod(1-v[1:(h-1)])
         }
-        Z = cbind(Z,  rnorm(n))
+        Z = cbind(Z, 0.05 * rnorm(n))
         B = rbind(B,c(rep(0,H-1),rnorm(q-H+1,0,theta_inf^(-1))))
         theta_inv_B = c(theta_inv_B,theta_inf^(-1))
         zta = c(zta,H-1)
@@ -132,13 +131,17 @@ briny_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,a_theta_B,b_theta_B,theta_
     H_hat[run] = Hstar
     if((run > burn) &((run-burn) %% thin == 0)){
       gamma_hat[m,] = gamma_Y
-      B_hat[[m]] = B
-      Z_hat[[m]] = Z
-      active_hat[[m]] = which(zta > c(1:H))
+      if(Hstar>0){
+        B_hat[[m]] = B[active,]
+        Z_hat[[m]] = Z[,active]
+      }else{
+        B_hat[[m]] = B
+        Z_hat[[m]] = Z
+      }
       m = m + 1
-    }
+    }    
   }
-  output = list("H" = H_hat,"Z" = Z_hat,"B" = B_hat,"active" = active_hat,
+  output = list("H" = H_hat,"Z" = Z_hat,"B" = B_hat,
                 "gamma" = gamma_hat)
   return(output)
 }

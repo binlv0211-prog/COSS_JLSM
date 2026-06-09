@@ -17,7 +17,7 @@ q = dim(Y)[2]
 nrun = 15000
 burn = 10000
 thin = 5
-a = 5
+alpha_H = 5
 delta_n = 1 + 0.001 * n 
 a_sig = 1
 b_sig = 1
@@ -41,8 +41,8 @@ res = list()
 res_criterion_total = list()
 res_likehood_total = list()
 for (i in 1:replation) {
-  res[[i]] = network_briny_1130(A,Y,nrun,burn,thin,delta_n,a_theta,b_theta,
-                                theta_inf,start_adapt,Hmax,a,alpha0,alpha1)
+  res[[i]] = network_briny_1130(A,Y,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,
+                                theta_inf,start_adapt,Hmax,alpha0,alpha1)
 }
 
 for (i in 1:replation) {

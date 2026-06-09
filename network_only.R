@@ -1,8 +1,8 @@
 library(pgdraw)
 library(LaplacesDemon)
 library(MASS)
-network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n,a_theta,b_theta,
-                             theta_inf,start_adapt,Hmax,a,alpha0,alpha1){
+network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,
+                             theta_inf,start_adapt,Hmax,alpha0,alpha1){
   set.seed(my_seed)
   #G = 1000
   n = dim(A)[1]
@@ -20,7 +20,6 @@ network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n,a_theta,b_theta,
   N_sample = ceiling((nrun - burn)/thin)
   alpha_hat = matrix(0,N_sample,n)
   Z_hat = list()
-  active_hat = list()
   m = 1
   for (run in 1:nrun){
     theta_A = Z %*% t(Z) + matrix(1,n,1)%*%matrix(alpha,1,n) + matrix(alpha,n,1) %*%matrix(1,1,n)
@@ -63,9 +62,9 @@ network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n,a_theta,b_theta,
     v = rep(NA,H)
     for (h in 1:(H - 1)){
       if (h == 1){
-        v[h] = rbeta(1, shape1 = (Hmax + 1)**(delta_n) + sum(zta == h), shape2 = 1 + sum(zta > h))
+        v[h] = rbeta(1, shape1 = Hmax**(delta_n) + sum(zta == h), shape2 = 1 + sum(zta > h))
       }else{
-        v[h] = rbeta(1, shape1 = a + sum(zta == h), shape2 = 1 + sum(zta > h))
+        v[h] = rbeta(1, shape1 = alpha_H + sum(zta == h), shape2 = 1 + sum(zta > h))
       }
     }
     v[H] = 1
@@ -96,7 +95,7 @@ network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n,a_theta,b_theta,
       } else if (H < Hmax) {
         # increase truncation by 1 and extend all variables, sampling from the prior/model
         H = H + 1
-        v[H - 1] = rbeta(1,shape1=a,shape2=1)
+        v[H - 1] = rbeta(1,shape1=alpha_H,shape2=1)
         v = c(v,1)
         w = rep(NA,H)
         w[1] = v[1]
@@ -110,12 +109,36 @@ network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n,a_theta,b_theta,
     }
     H_hat[run] = Hstar
     if((run > burn) &((run-burn) %% thin == 0)){
-      active_hat[[m]] = which(zta > c(1:H))      
       alpha_hat[m,] = alpha
       Z_hat[[m]] = Z 
       m = m + 1
     } 
   }
-  output = list("H" = H_hat,"active" = active_hat,"Z" = Z_hat,"alpha" = alpha_hat)
+  output = list("H" = H_hat,"Z" = Z_hat,"alpha" = alpha_hat)
   return(output)
 }
+# n = 200
+# k = 4
+# q = 30
+# Z_ture = matrix(rnorm(n * k),nrow = n,ncol = k)
+# alpha_ture = runif(n,-0.75,-0.25)
+# logit_A = Z_ture %*% t(Z_ture)+matrix(1,n,1)%*%matrix(alpha_ture,1,n)+matrix(alpha_ture,n,1)%*%matrix(1,1,n)
+# prob_A = plogis(logit_A)
+# U_A = matrix(runif(n*n),n,n)
+# A = matrix(0,n,n)
+# A[which(U_A < prob_A)] = 1
+# for (i in 1:n){
+#   for (j in 1:(i - 1)) {
+#     A[j,i] = A[i,j]
+#   }
+#   A[i,i] = 1
+# }
+# gamma_ture = rnorm(q)
+# B_ture = matrix(runif(k*q,0.25,1.25),nrow = k, ncol = q)
+# Y = Z_ture %*% B_ture + (matrix(1,n,1) %*% matrix(gamma_ture,1,q)) + matrix(rnorm(n * q),n,q)
+# out = network_only_1123(A, 123, 5000,2000,3, 4,2,2, 0.05, 100, 8, 1,5*10^(-4))
+# a = matrix(0,n,n)
+# for(i in 1:1000){
+#   a = out$Z[[i]]%*%t(out$Z[[i]])/1000 + a
+# }
+# mean((a - Z_ture%*%t(Z_ture))**2)

@@ -47,7 +47,7 @@ network_normal_kf = function(A,Y,H,a_sig,b_sig,nrun,burn,thin){
       Z[i,] = mvrnorm(1,u_Zi,Sigma_Zi)
     }
     si_g = 1 / (n * inv_sigma + 1/100)
-    sigma_gamma = diag(si_g)##此处默认gamma先验的方差为100，后续可能会改动
+    sigma_gamma = diag(si_g)##此处默认gamma先验的方差为n，后续可能会改动
     #u_gamma_temp = Y - Z %*% B
     u_gamma = inv_sigma * si_g * (apply(Y - Z %*% B, 2, sum))
     gamma_Y = mvrnorm(1, u_gamma, sigma_gamma)
@@ -87,6 +87,46 @@ network_normal_kf = function(A,Y,H,a_sig,b_sig,nrun,burn,thin){
   return(output)  
 }
 
+network_normal_kf0 = function(A,Y,a_sig,b_sig,nrun,burn,thin){
+  n = dim(A)[1]
+  q = dim(Y)[2]
+  alpha = rnorm(n)
+  gamma_Y = rep(1,q)
+  inv_sigma = rep(1,q)
+  N_sample = ceiling((nrun - burn)/thin)
+  alpha_hat = matrix(0,N_sample,n)
+  gamma_hat = matrix(0,N_sample,q)
+  sigma_hat = matrix(0,N_sample,q)
+  m = 1  
+  for (run in 1:nrun){
+    theta_A = matrix(1,n,1)%*%matrix(alpha,1,n) + matrix(alpha,n,1) %*%matrix(1,1,n)
+    D_A = matrix(pgdraw(1, theta_A), nrow = n,ncol = n)
+    D_A = (D_A + t(D_A)) / 2
+    for(i in 1:n){
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      u_temp = A[i,] - 0.5 - D_A[i,] * (alpha)
+      u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
+      alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
+    }
+    si_g = 1 / (n * inv_sigma + 1/100)
+    sigma_gamma = diag(si_g)##此处默认gamma先验的方差为n，后续可能会改动
+    #u_gamma_temp = Y - Z %*% B
+    u_gamma = inv_sigma * si_g * (apply(Y, 2, sum))
+    gamma_Y = mvrnorm(1, u_gamma, sigma_gamma)
+    diff_Y = apply((Y - (matrix(1,n,1) %*% matrix(gamma_Y,1,q)))**2, 2, sum)
+    for (j in 1:q){
+      inv_sigma[j] = rgamma(n=1,shape=a_sig + 0.5 * n,rate=b_sig + 0.5 * diff_Y[j])
+    }   
+    if((run > burn) &((run-burn) %% thin == 0)){
+      gamma_hat[m,] = gamma_Y
+      alpha_hat[m,] = alpha
+      sigma_hat[m,] = 1 / inv_sigma
+      m = m+1
+    }
+    output = list("alpha" = alpha_hat,"gamma" = gamma_hat,"sigma" = sigma_hat)
+    return(output) 
+  }
+}
 
 network_normal_kf_getZ = function(A,Y,gamma_Y,inv_sigma,B,nrun,burn,thin){
   n = dim(A)[1]
@@ -128,4 +168,31 @@ network_normal_kf_getZ = function(A,Y,gamma_Y,inv_sigma,B,nrun,burn,thin){
   }
   output = list("alpha" = alpha_hat,"Z" = Z_hat)
   return(output)
+}
+
+network_normal_kf0_getalpha = function(A,Y,gamma_Y,nrun,burn,thin){
+  n = dim(A)[1]
+  q = dim(Y)[2]
+  alpha = rnorm(n)  
+  N_sample = ceiling((nrun - burn)/thin)
+  alpha_hat = matrix(0,N_sample,n)
+  m = 1
+  for (run in 1:nrun){
+    theta_A = matrix(1,n,1)%*%matrix(alpha,1,n) + matrix(alpha,n,1) %*%matrix(1,1,n)
+    D_A = matrix(pgdraw(1, theta_A), nrow = n,ncol = n)
+    D_A = (D_A + t(D_A)) / 2 
+    #update alpha
+    for(i in 1:n){
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      u_temp = A[i,] - 0.5 - D_A[i,] * (alpha)
+      u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
+      alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
+    }  
+    if((run > burn) &((run-burn) %% thin == 0)){
+      alpha_hat[m,] = alpha
+      m = m+1
+    }
+  }
+  output = list("alpha" = alpha_hat)
+  return(output)  
 }

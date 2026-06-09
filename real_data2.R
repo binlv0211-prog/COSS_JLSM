@@ -8,15 +8,15 @@ source("C:/Users/33701/Desktop/code/mice.R")
 source("C:/Users/33701/Desktop/code/network_miss.R")
 source("C:/Users/33701/Desktop/code/network_binary_miss.R")
 source("C:/Users/33701/Desktop/code/data_process.R")
-load("C:/Users/33701/Desktop/毕业论文/实际数据/real_data.RData8")
+load("C:/Users/33701/Desktop/毕业论文/实际数据/real_data.RData1")
 A = real_data$A
 Y = real_data$Y
 n = dim(Y)[1]
 q = dim(Y)[2]
-nrun = 15
-burn = 10
+nrun = 15000
+burn = 10000
 thin = 5
-a = 5
+alpha_H = 5
 delta_n = 1 + 0.001 * n 
 a_sig = 1
 b_sig = 1
@@ -61,8 +61,8 @@ res = foreach(iter = 1:replation, .verbose = TRUE, .packages = c("MASS","pgdraw"
   }
   prob_Y_net = apply(prob_Y_net_hat, c(1,2), mean)
   
-  net_binary_out = network_briny_miss(A,Y,M,nrun,burn,thin,delta_n,a_theta,b_theta,
-                                      theta_inf,start_adapt,Hmax,a,alpha0,alpha1)
+  net_binary_out = network_briny_miss(A,Y,M,nrun,burn,thin,delta_n, alpha_H,a_theta,b_theta,
+                                      theta_inf,start_adapt,Hmax,alpha0,alpha1)
   N_sample = ceiling((nrun - burn)/thin)
   prob_Y_joint_hat = array(0,dim = c(n,q,N_sample))
   for (i in 1:N_sample) {

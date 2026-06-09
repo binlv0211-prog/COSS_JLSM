@@ -1,8 +1,8 @@
 library(pgdraw)
 library(LaplacesDemon)
 library(MASS)
-network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n,a_theta,b_theta,
-                             theta_inf,start_adapt,Hmax,a,alpha0,alpha1){
+network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n, alpha_H,a_theta,b_theta,
+                             theta_inf,start_adapt,Hmax,alpha0,alpha1){
   set.seed(my_seed)
   #G = 1000
   n = dim(A)[1]
@@ -65,7 +65,7 @@ network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n,a_theta,b_theta,
       if (h == 1){
         v[h] = rbeta(1, shape1 = (Hmax + 1)**(delta_n) + sum(zta == h), shape2 = 1 + sum(zta > h))
       }else{
-        v[h] = rbeta(1, shape1 = a + sum(zta == h), shape2 = 1 + sum(zta > h))
+        v[h] = rbeta(1, shape1 = alpha_H + sum(zta == h), shape2 = 1 + sum(zta > h))
       }
     }
     v[H] = 1
@@ -96,7 +96,7 @@ network_only_1123 = function(A,my_seed,nrun,burn,thin,delta_n,a_theta,b_theta,
       } else if (H < Hmax) {
         # increase truncation by 1 and extend all variables, sampling from the prior/model
         H = H + 1
-        v[H - 1] = rbeta(1,shape1=a,shape2=1)
+        v[H - 1] = rbeta(1,shape1=alpha_H,shape2=1)
         v = c(v,1)
         w = rep(NA,H)
         w[1] = v[1]

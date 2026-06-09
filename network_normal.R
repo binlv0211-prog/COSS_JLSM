@@ -1,8 +1,8 @@
 library(pgdraw)
 library(LaplacesDemon)
 library(MASS)
-network_nomal = function(A,Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta,b_theta,#a_theta_B,b_theta_B,
-                         theta_inf,start_adapt,Hmax,a,alpha0,alpha1){
+network_nomal = function(A,Y,nrun,burn,thin,delta_n, alpha_H,a_sig,b_sig,a_theta,b_theta,#a_theta_B,b_theta_B,
+                         theta_inf,start_adapt,Hmax,alpha0,alpha1){
   #G = 1000
   n = dim(A)[1]
   q = dim(Y)[2]
@@ -33,7 +33,6 @@ network_nomal = function(A,Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta,b_theta,
   sigma_hat = matrix(0,N_sample,q)
   B_hat = list()
   Z_hat = list()
-  active_hat = list()
   m = 1
   for (run in 1:nrun){
     theta_A = Z %*% t(Z) + matrix(1,n,1)%*%matrix(alpha,1,n) + matrix(alpha,n,1) %*%matrix(1,1,n)
@@ -80,9 +79,9 @@ network_nomal = function(A,Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta,b_theta,
     v = rep(NA,H)
     for (h in 1:(H - 1)){
       if (h == 1){
-        v[h] = rbeta(1, shape1 = (Hmax + 1)**(delta_n) + sum(zta == h), shape2 = 1 + sum(zta > h))
+        v[h] = rbeta(1, shape1 = Hmax**(delta_n) + sum(zta == h), shape2 = 1 + sum(zta > h))
       }else{
-        v[h] = rbeta(1, shape1 = a + sum(zta == h), shape2 = 1 + sum(zta > h))
+        v[h] = rbeta(1, shape1 = alpha_H + sum(zta == h), shape2 = 1 + sum(zta > h))
       }
     }
     v[H] = 1
@@ -140,14 +139,14 @@ network_nomal = function(A,Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta,b_theta,
         theta_inv = c(theta_inv[active],theta_inf^(-1))
         w = c(w[active],1-sum(w[active]))
         Z = cbind(Z[,active],rnorm(n,mean=0,sd=sqrt(theta_inf)))
-        B = rbind(B[active,],c(rep(0,H-1),rnorm(q-H+1)))
+        B = rbind(B[active,],c(rep(0,H-1),0.05 *rnorm(q-H+1)))
         #theta_inv_B = c(theta_inv_B[active],rgamma(1,a_theta_B,b_theta_B))
         #B = rbind(B[active,],rnorm(q,0,sqrt(theta_inv_B[H])))
         zta = c(zta[active],H-1)
       } else if (H < Hmax) {
         # increase truncation by 1 and extend all variables, sampling from the prior/model
         H = H + 1
-        v[H - 1] = rbeta(1,shape1=a,shape2=1)
+        v[H - 1] = rbeta(1,shape1=alpha_H,shape2=1)
         v = c(v,1)
         w = rep(NA,H)
         w[1] = v[1]
@@ -156,7 +155,7 @@ network_nomal = function(A,Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta,b_theta,
         }
         theta_inv = c(theta_inv,theta_inf^(-1))
         Z = cbind(Z,rnorm(n,mean=0,sd=sqrt(theta_inf)))
-        B = rbind(B,c(rep(0,H-1), rnorm(q-H+1)))
+        B = rbind(B,c(rep(0,H-1),0.05 * rnorm(q-H+1)))
         #theta_inv_B = c(theta_inv_B,rgamma(1,a_theta_B,b_theta_B))
         #B = rbind(B,rnorm(q,0,sqrt(theta_inv_B[H])))
         zta = c(zta,H-1)
@@ -165,16 +164,20 @@ network_nomal = function(A,Y,nrun,burn,thin,delta_n,a_sig,b_sig,a_theta,b_theta,
     H_hat[run] = Hstar
     if((run > burn) &((run-burn) %% thin == 0)){
       gamma_hat[m,] = gamma_Y
-      B_hat[[m]] = B
-      Z_hat[[m]] = Z
-      active_hat[[m]] = which(zta > c(1:H))
+      if(Hstar>0){
+        B_hat[[m]] = B[1:Hstar,]
+        Z_hat[[m]] = Z[,1:Hstar]
+      }else{
+        B_hat[[m]] = B
+        Z_hat[[m]] = Z
+      }
       sigma_hat[m,] = 1 / inv_sigma
       alpha_hat[m,] = alpha
       m = m+1
-    }  
+    }
   }
-  output = list("H" = H_hat,"active" = active_hat,"alpha" = alpha_hat,"B" = B_hat,"sigma" = sigma_hat,
-                "gamma" = gamma_hat,"Z" = Z_hat)
+  output = list("H" = H_hat,"alpha" = alpha_hat,"B" = B_hat,
+                "gamma" = gamma_hat,"Z" = Z_hat,"sigma" = sigma_hat)
   return(output)
 }
 
