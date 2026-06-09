@@ -1,35 +1,58 @@
-### **Description**
+# Description
 
-The repository contains code associated with the following article (i.e., the code supporting the numerical findings)  and describes how to reproduce the findings.
-> Bin, lv. and Siliang, Zhang. (2025). Joint Latent Space Modeling with Latent Dimension Selection via Cumulative Shrinkage Priors.
-> 
-### **Core Functionality**
+This repository contains the R code required to reproduce the numerical findings presented in the following paper:
 
-The primary functions of the code in this repository are:
+> **Lv, B., Tang, Y., & Zhang, S. (2025).** *A Cumulative Ordered Spike-and-Slab Prior for Adaptive Dimension Selection in Joint Latent Space Models.*
+---
 
-*   **Data Simulation and Evaluation:** A dedicated script (`data_process.R`) for generating simulated datasets and for the calculation of evaluation criteria.
-*   **Gibbs Sampling Algorithms:** A comprehensive suite of scripts to perform Gibbs sampling for various data types, including:
-    *   Network data only (`network_only.R`)
-    *   Continuous node variable data only (`Y_only_normal.R`)
-    *   Binary node variable data only (`Y_only_binary.R`)
-    *   Network with continuous node variable data (`network_normal.R`)
-    *   Network with binary node variable data (`network_binary.R`)
-*   **Cross-Validation and Prior Variations:** Scripts that incorporate normal priors and functions for cross-validation in the context of:
-    *   Binary node variables in network data (`network_normal_kl.R`)
-    *   Continuous node variables in network data (`network_binary_kl.R`)
-*   **Missing Data Imputation:** Specialized functions for imputing missing binary node variables using:
-    *   Network latent space modeling (`network_miss.R`, `network_binary_miss.R`)
-    *   The Multiple Imputation by Chained Equations (MICE) algorithm (`mice.R`)
+## Core Functionality
 
-### **Replication Scripts**
+The repository provides a comprehensive framework for joint latent space modeling, including data generation, model estimation, and performance evaluation.
 
-The repository includes high-level scripts to reproduce the main findings of the paper:
+### 1. Data Simulation and Evaluation
+*   `data_process.R`: A utility script for generating synthetic datasets and calculating evaluation metrics (e.g., recovery accuracy, predictive performance).
 
-*   **Simulation 1 (`simulation1.R`):** Investigates the impact of sample size on model performance.
-*   **Simulation 2 (`simulation2.R`):** Explores the effects of network density in a six-node simulation setup.
-*   **Real Data Analysis 1 (`real_data1.R`):** Applies the proposed methodology to the French financial elites dataset.
-*   **Real Data Analysis 2 (`real_data2.R`):** Demonstrates the method's application on a Facebook social network dataset.
+### 2. Gibbs Sampling Algorithms
+A suite of scripts implementing Gibbs samplers for various data configurations:
+*   **Marginal Models:**
+    *   `network_only.R`: Network structure only.
+    *   `Y_only_normal.R` / `binary.R` / `ordinal.R` / `mix.R`: Node attributes only (Continuous, Binary, Ordinal, or Mixed-type).
+*   **Joint Models (Network + Node Attributes):**
+    *   `network_normal.R`: Network data with continuous attributes.
+    *   `network_binary.R`: Network data with binary attributes.
+    *   `network_ordinal.R`: Network data with ordinal attributes.
+    *   `network_mix.R`: Network data with mixed-type attributes (continuous, binary, and ordinal).
 
-### **Code Format**
+### 3. Cross-Validation and Model Selection
+Scripts for dimension selection and prior sensitivity analysis using normal priors and Kullback-Leibler (KL) divergence:
+*   `network_normal_kl.R`: Cross-validation for continuous attributes in networks.
+*   `network_binary_kl.R`: Cross-validation for binary attributes in networks.
 
-All scripts are written in the R programming language. To execute the code, users will need a functioning R environment with the necessary packages installed.
+### 4. Missing Data Imputation
+Specialized functions for handling missingness in binary node attributes:
+*   **Latent Space Approaches:** `network_miss.R` and `network_binary_miss.R` leverage the latent space structure for imputation.
+*   **Baseline Comparison:** `mice.R` implements the Multiple Imputation by Chained Equations (MICE) algorithm.
+
+---
+
+## Replication Scripts
+
+High-level scripts are provided to reproduce the core experiments and case studies:
+
+### Simulation Studies
+*   **Sample Size (`Simulation1.R`):** Investigates model performance across varying sample sizes.
+*   **Network Density (`Simulation2.R`):** Explores the impact of network density within a six-node simulation setup.
+*   **Hyperparameter Sensitivity (`Simulation_sensitive.R`):** Evaluates the influence of hyperparameter choices ($a, a_\theta, b_\theta$).
+*   **Attribute Types (`Simulation_ordinal.R`, `Simulation_mix.R`):** Validates the model's performance on ordinal and mixed-type node attributes.
+
+### Empirical Applications
+*   **Real Data 1 (`real_data1.R`):** Analysis of the **French Financial Elites** dataset.
+*   **Real Data 2 (`real_data2.R`):** Application to the **Facebook Social Network** dataset.
+*   **Real Data 3 (`real_data3.R`, `real_data3_functions.R`):** Analysis of the **Teenage Friends and Lifestyle Study**.
+
+---
+
+## Environment and Usage
+
+*   **Language:** All scripts are written in **R**.
+*   **Requirements:** To execute the code, ensure you have a functional R environment and install the necessary dependencies (e.g., `MASS`, `pgdraw`, or other packages invoked in the scripts).
