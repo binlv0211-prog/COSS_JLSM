@@ -4,8 +4,8 @@ library(MASS)
 source("functions/network_only.R")
 source("functions/network_binary.R")
 source("functions/network_normal.R")
-source("functions/code/Y_only_binary.R")
-source("functions/code/Y_only_normal.R")
+source("functions/Y_only_binary.R")
+source("functions/Y_only_normal.R")
 source("functions/network_normal_kl.R")
 source("functions/network_binary_kl.R")
 source("functions/data_process.R")
@@ -48,7 +48,7 @@ for (i in 1:replation) {
 for (i in 1:replation) {
   res_criterion = list()
   for (j in 1:Hmax) {
-    res_criterion[[j]] = network_normal_kf(A,Y,j,a_sig,b_sig,nrun,burn,thin)
+    res_criterion[[j]] = network_briny_kf(A,Y,j,nrun,burn,thin)
   }
   res_criterion_total[[i]] = res_criterion
 }
@@ -67,11 +67,10 @@ for (i in 1:replation) {
     A_test = A[test_ids,test_ids]
     Y_test = Y[test_ids,]
     for (j in 1:Hmax) {
-      kf_out = network_normal_kf(A_train,Y_train,j,a_sig,b_sig,nrun,burn,thin) 
-      inv_sigma =  1 / apply(kf_out$sigma, 2, mean)
+      kf_out = network_briny_kf(A_train,Y_train,j,nrun,burn,thin) 
       gamma_Y = apply(kf_out$gamma, 2, mean)
       B = apply(kf_out$B,c(2,3),mean)
-      kf_outz = network_normal_kf_getZ(A_test,Y_test,gamma_Y,inv_sigma,B,nrun,burn,thin)
+      kf_outz = network_briny_kf_getZ(A_test,Y_test,gamma_Y,B,nrun,burn,thin)
       alpha_test = apply(kf_outz$alpha,2,mean)
       Z_test = apply(kf_outz$Z,c(2,3),mean)
       loglikehood[j,jj] = get_loglikehood_binary(A_test,Y_test,alpha_test,gamma_Y,B,Z_test)      
