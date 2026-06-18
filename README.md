@@ -5,7 +5,7 @@ This repository contains the R code required to reproduce the numerical findings
 > **Lv, B., Tang, Y., & Zhang, S. (2025).** *A Cumulative Ordered Spike-and-Slab Prior for Adaptive Dimension Selection in Joint Latent Space Models.*
 ---
 
-## Core Functionality
+## Core Functionality 
 
 The repository provides a comprehensive framework for joint latent space modeling, including data generation, model estimation, and performance evaluation.
 
