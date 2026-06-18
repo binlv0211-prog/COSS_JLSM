@@ -50,8 +50,8 @@ res = foreach(iter = 1:replation, .verbose = TRUE, .packages = c("MASS","pgdraw"
   prob_Y_mice_hat = mice_prob(Y,M,s,t)
   prob_Y_mice = apply(prob_Y_mice_hat, c(1,2), mean)
   
-  net_out = network_only_1123(A,1234,nrun,burn,thin,delta_n,a_theta,b_theta,
-                              theta_inf,start_adapt,Hmax,a,alpha0,alpha1)
+  net_out = network_only_1123(A,1234,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,
+                              theta_inf,start_adapt,Hmax,alpha0,alpha1)
   Z_post_hat = get_Z_post(net_out)
   Y_out = miss_Y_binary(Y,M,Z_post_hat,t,s)
   
