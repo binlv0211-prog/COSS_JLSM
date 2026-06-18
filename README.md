@@ -7,7 +7,7 @@ This repository contains the R code required to reproduce the numerical findings
 
 ## Core Functionality 
 
-The repository provides a comprehensive framework for joint latent space modeling, including data generation, model estimation, and performance evaluation.
+The repository provides a comprehensive framework for joint latent space modeling, including data generation, model estimation, and performance evaluation. All core functions used in the implementation are organized in the `functions/·` folder.
 
 ### 1. Data Simulation and Evaluation
 *   `data_process.R`: A utility script for generating synthetic datasets and calculating evaluation metrics (e.g., recovery accuracy, predictive performance).
