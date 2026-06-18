@@ -38,7 +38,7 @@ Y3[is.na(Y3)] = 1
 Y4 = lifestyle_env$music1[selections,]
 
 
-pll = 50
+pll = 1
 replation = 100
 cl = makeCluster(pll)      
 registerDoParallel(cl)
