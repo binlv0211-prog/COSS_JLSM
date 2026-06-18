@@ -40,7 +40,7 @@ b3_l = 0
 b3_u = 1.5
 b4_l = 1.5
 b4_u = 3
-pll = 50
+pll = 1
 replation = 100
 
 cl = makeCluster(pll)      
