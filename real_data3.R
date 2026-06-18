@@ -52,6 +52,44 @@ res = foreach(iter = 1:replation, .verbose = TRUE, .packages = c("MASS","pgdraw"
 stopCluster(cl)
 
 
+nrun = 15000
+burn = 10000
+thin = 5
+source("functions/data_process.R")
+H_all = matrix(0, replation, nrun)
+for(i in 1:replation){
+  H_all[i, ] = res[[i]]$H
+}
+thining = seq(burn + thin, nrun, thin)
+H_thin = H_all[, thining]
+H_hat = apply(H_thin, 1, getmode)
+
+cl = makeCluster(pll) 
+registerDoParallel(cl)
+res = foreach(iter = 1:replation, 
+              .verbose = TRUE, 
+              .packages = c("MASS", "pgdraw", "LaplacesDemon", "truncnorm"), 
+              .combine = list, 
+              .multicombine = TRUE) %dopar% {
+                
+                # 获取当前迭代的 H 值
+                H = H_hat[iter]
+                
+                # 运行主要函数
+                net_Y_out_normal = network_mix_real_data_kf(A, Y1, Y2, Y3, Y4, 
+                                                            MissY1, MissY3, H, 
+                                                            nrun = 15000, 
+                                                            burn = 10000, 
+                                                            thin = 5)
+                
+                return(net_Y_out_normal)
+              }
+
+stopCluster(cl)
+rm(list = ls())
+gc()
+
+
 cl = makeCluster(pll)      
 registerDoParallel(cl)
 res = foreach(iter = 1:replation, .verbose = TRUE, .packages = c("MASS","pgdraw","LaplacesDemon","truncnorm"), .combine = list, .multicombine = TRUE) %dopar% {
