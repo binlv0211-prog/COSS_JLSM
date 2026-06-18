@@ -278,7 +278,7 @@ get_loglikehood_normal = function(A,Y,alpha,gamma_Y,B,Z,sigma){
   n = dim(A)[1]
   q = dim(Y)[2]
   k = dim(Z)[2]
-  Sigma_matrix = matrix(rep(sigma, n), nrow = m, ncol = length(sigma), byrow = TRUE)
+  Sigma_matrix = matrix(rep(sigma, n), nrow = n, ncol = length(sigma), byrow = TRUE)
   theta_A = Z %*% t(Z) + matrix(1,n,1)%*%matrix(alpha,1,n) + matrix(alpha,n,1) %*%matrix(1,1,n)
   theta_Y = Z %*% B + (matrix(1,n,1) %*% matrix(gamma_Y,1,q))
   L_A = A * theta_A - log(1 + exp(theta_A))
