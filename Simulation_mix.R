@@ -29,7 +29,7 @@ Hmax = 7
 alpha0 = 1
 alpha1 = 5*10^(-4)
 alpha_l = -0.5
-alpha_u = 0.5#保证网络的密度大于0.5
+alpha_u = 0.5
 B_l = 0.25
 B_u = 1.25
 b1_l = -3
@@ -40,7 +40,7 @@ b3_l = 0
 b3_u = 1.5
 b4_l = 1.5
 b4_u = 3
-pll = 1
+pll = 50
 replation = 100
 
 cl = makeCluster(pll)      

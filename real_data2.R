@@ -9,6 +9,13 @@ source("functions/network_miss.R")
 source("functions/network_binary_miss.R")
 source("functions/data_process.R")
 load("datas/real_data1.RData")
+# load("datas/real_data2.RData")
+# load("datas/real_data3.RData")
+# load("datas/real_data4.RData")
+# load("datas/real_data5.RData")
+# load("datas/real_data6.RData")
+# load("datas/real_data7.RData")
+# load("datas/real_data8.RData")
 A = real_data$A
 Y = real_data$Y
 n = dim(Y)[1]
@@ -30,7 +37,7 @@ Hmax = 15
 alpha0 = -1
 alpha1 = -5*10^(-4)
 alpha_l = -0.5
-alpha_u = 0.5#保证网络的密度大于0.5
+alpha_u = 0.5
 B_l = 0.5
 B_u = 1.5
 K = 5
@@ -50,7 +57,7 @@ res = foreach(iter = 1:replation, .verbose = TRUE, .packages = c("MASS","pgdraw"
   prob_Y_mice_hat = mice_prob(Y,M,s,t)
   prob_Y_mice = apply(prob_Y_mice_hat, c(1,2), mean)
   
-  net_out = network_only_1123(A,1234,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,
+  net_out = network_only_1123(A,1234,nrun,burn,thin,delta_n, alpha_H,a_theta,b_theta,
                               theta_inf,start_adapt,Hmax,alpha0,alpha1)
   Z_post_hat = get_Z_post(net_out)
   Y_out = miss_Y_binary(Y,M,Z_post_hat,t,s)
