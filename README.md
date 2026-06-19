@@ -120,4 +120,4 @@ https://www.stats.ox.ac.uk/~snijders/siena/Glasgow_data.htm
 ## Environment and Usage
 
 *   **Language:** All scripts are written in **R**, with the exception of visualization components (e.g., `05_plot.ipynb` in `real_data3/`) which are implemented in **Python**.
-*   **Requirements:** To execute the code, ensure you have functional **R** and **Python** environments. Install the necessary R dependencies (e.g., `MASS`, `pgdraw`, or other packages invoked in the scripts) and Python dependencies (e.g., `matplotlib`, `seaborn`, `pandas`, `numpy`) for running the Jupyter notebooks.
+*   **Requirements:** To execute the code, ensure you have functional **R** and **Python** environments. Install the necessary R dependencies (e.g., `MASS`, `pgdraw`, or other packages invoked in the scripts) and Python dependencies (e.g., `matplotlib`, `pandas`, `numpy`) for running the Jupyter notebooks.
