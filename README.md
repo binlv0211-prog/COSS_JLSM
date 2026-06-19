@@ -48,7 +48,7 @@ High-level scripts are provided to reproduce the core experiments and case studi
 ### Empirical Applications
 *   **Real Data 1 (`real_data1.R`):** Analysis of the **French Financial Elites** dataset.
 *   **Real Data 2 (`real_data2.R`):** Application to the **Facebook Social Network** dataset.
-*   **Real Data 3 (`real_data3.R`, `real_data3_functions.R`):** Analysis of the **Teenage Friends and Lifestyle Study**.
+*   **Real Data 3 (`real_data3/`):** Analysis of the **Teenage Friends and Lifestyle Study**. The analysis pipeline includes: `01_functions.R` (core functions), `02_fit_data.R` (model fitting), `03_dim_select.R` (dimension selection), `04_metric_cal.R` (metric calculation), and `05_plot.ipynb` (visualization in Jupyter Notebook).
 
 ---
 
@@ -119,5 +119,5 @@ https://www.stats.ox.ac.uk/~snijders/siena/Glasgow_data.htm
 
 ## Environment and Usage
 
-*   **Language:** All scripts are written in **R**.
-*   **Requirements:** To execute the code, ensure you have a functional R environment and install the necessary dependencies (e.g., `MASS`, `pgdraw`, or other packages invoked in the scripts).
+*   **Language:** All scripts are written in **R**, with the exception of visualization components (e.g., `05_plot.ipynb` in `real_data3/`) which are implemented in **Python**.
+*   **Requirements:** To execute the code, ensure you have functional **R** and **Python** environments. Install the necessary R dependencies (e.g., `MASS`, `pgdraw`, or other packages invoked in the scripts) and Python dependencies (e.g., `matplotlib`, `seaborn`, `pandas`, `numpy`) for running the Jupyter notebooks.
