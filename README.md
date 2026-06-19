@@ -42,8 +42,8 @@ High-level scripts are provided to reproduce the core experiments and case studi
 ### Simulation Studies
 *   **Sample Size (`Simulation1.R`):** Investigates model performance across varying sample sizes.
 *   **Network Density (`Simulation2.R`):** Explores the impact of network density within a six-node simulation setup.
-*   **Hyperparameter Sensitivity (`Simulation_sensitive.R`):** Evaluates the influence of hyperparameter choices ($a, a_\theta, b_\theta$).
-*   **Attribute Types (`Simulation_ordinal.R`, `Simulation_mix.R`):** Validates the model's performance on ordinal and mixed-type node attributes.
+*   **Hyperparameter Sensitivity (`Simulation_supp_sensitive.R`):** Evaluates the influence of hyperparameter choices ($a, a_\theta, b_\theta$).
+*   **Attribute Types (`Simulation_supp_ordinal.R`, `Simulation_supp_mix.R`):** Validates the model's performance on ordinal and mixed-type node attributes.
 
 ### Empirical Applications
 *   **Real Data 1 (`real_data1.R`):** Analysis of the **French Financial Elites** dataset.
