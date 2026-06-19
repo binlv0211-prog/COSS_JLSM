@@ -52,6 +52,71 @@ High-level scripts are provided to reproduce the core experiments and case studi
 
 ---
 
+## Data Access and Preprocessing
+
+The empirical applications in this repository are based on three publicly available benchmark datasets. Data sources and preprocessing steps are summarized below.
+
+### 1. French Financial Elites
+
+The French Financial Elites dataset was originally collected by Kadushin (1995) to study social connections among members of the French financial elite during the final years of France's Socialist government.
+
+For this study, we use the processed version distributed with the **`jlsm`** R package (Wang, 2021), which has also been analyzed in Wang et al. (2022) and Wang et al. (2023).
+
+**Data access:**
+
+The processed dataset can be obtained from the archived source of the **`jlsm`** package:
+
+* CRAN Archive: https://cran.r-project.org/src/contrib/Archive/jlsm/
+
+The package contains the dataset `french`, which includes the friendship network and associated node attributes used in our analysis.
+
+**Preprocessing:**
+
+No additional preprocessing was performed beyond the version distributed with the `jlsm` package.
+
+
+---
+
+### 2. Facebook Ego Networks
+
+The Facebook Social Network dataset consists of ego-networks collected from Facebook users and is publicly available through the Stanford Network Analysis Project (SNAP).
+
+**Data access:**
+
+https://snap.stanford.edu/data/
+
+**Preprocessing performed in this repository:**
+
+* We analyze 8 of the 10 ego-networks.
+* Two networks are excluded due to extremely small size or highly sparse attribute vectors.
+* Binary attributes with extremely low or high prevalence are removed within each network, following Zhang et al. (2022).
+* The remaining anonymized binary attributes are used for missing-data imputation experiments.
+
+---
+
+### 3. Teenage Friends and Lifestyle Study (Glasgow Study)
+
+The Teenage Friends and Lifestyle Study is a longitudinal study of adolescent friendship networks and health-related behaviors conducted in Glasgow between 1995 and 1997.
+
+The dataset is distributed through the SIENA project.
+
+**Data access:**
+
+https://www.stats.ox.ac.uk/~snijders/siena/Glasgow_data.htm
+
+**Preprocessing performed in this repository:**
+
+* We use the older cohort at the first measurement wave.
+* Only the 129 students observed at all three waves are retained.
+* Friendship nominations are converted to an undirected binary network:
+
+  * `A[i,j] = 1` if either student nominated the other.
+* The original distinction between “best friends” and “just friends” is collapsed into a single friendship indicator.
+* Node attributes include ordinal and mixed-type variables describing substance use, leisure activities, and musical preferences.
+
+---
+
+
 ## Environment and Usage
 
 *   **Language:** All scripts are written in **R**.
