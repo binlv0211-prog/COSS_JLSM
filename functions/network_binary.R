@@ -7,7 +7,6 @@ network_briny_1130 = function(A,Y,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta
   n = dim(A)[1]
   q = dim(Y)[2]
   u<-runif(nrun)
-  #初始化
   H = Hmax + 1
   Hstar = Hmax
   alpha = rnorm(n)
@@ -22,7 +21,6 @@ network_briny_1130 = function(A,Y,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta
       B[i,j] = 0
     }
   }
-  #一些结果,后续可能会根据需求改变
   H_hat = rep(NA,nrun)
   N_sample = ceiling((nrun - burn)/thin)
   alpha_hat = matrix(0,N_sample,n)
@@ -39,7 +37,7 @@ network_briny_1130 = function(A,Y,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta
     #update alpha
     Z_temp = Z %*% t(Z)
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))

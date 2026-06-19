@@ -4,11 +4,11 @@ library(truncnorm)
 library(LaplacesDemon)
 item_Y_only = function(Y,nrun,burn,thin,delta_n,alpha_H,a_theta_B,b_theta_B,
                        theta_inf,Hmax,start_adapt,alpha0,alpha1){
-  #初始话
+ 
   n = dim(Y)[1]
   q = dim(Y)[2]
   u<-runif(nrun)
-  #初始化
+  #
   H = Hmax + 1
   Hstar = Hmax
   Z = matrix(rnorm(n * H),nrow = n,ncol = H)
@@ -22,13 +22,13 @@ item_Y_only = function(Y,nrun,burn,thin,delta_n,alpha_H,a_theta_B,b_theta_B,
       B[i,j] = 0
     }
   }
-  Phi = matrix(1,n,q)#文章中的Z
+  Phi = matrix(1,n,q)#
   W = matrix(1,n,q)
   b1<-rtruncnorm(q, a=-3, b=-1.5, mean = 0, sd = 1)
   b2<-rtruncnorm(q, a=-1.5, b=0, mean = 0, sd = 1)
   b3<-rtruncnorm(q, a=0, b=1.5, mean = 0, sd = 1)
   b4<-rtruncnorm(q, a=1.5, b=3, mean = 0, sd = 1)
-  #存数据
+  #
   N_sample = ceiling((nrun - burn)/thin)
   H_hat = rep(NA,nrun)
   Z_hat = list()

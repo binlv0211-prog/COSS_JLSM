@@ -7,7 +7,7 @@ joint_item_Y = function(A,Y,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,
   n = dim(Y)[1]
   q = dim(Y)[2]
   u<-runif(nrun)
-  #初始化
+  #
   H = Hmax + 1
   Hstar = Hmax
   alpha = rnorm(n)
@@ -22,13 +22,13 @@ joint_item_Y = function(A,Y,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,
       B[i,j] = 0
     }
   }
-  Phi = matrix(1,n,q)#文章中的Z
+  Phi = matrix(1,n,q)#
   W = matrix(1,n,q)
   b1<-rtruncnorm(q, a=-3, b=-1.5, mean = 0, sd = 1)
   b2<-rtruncnorm(q, a=-1.5, b=0, mean = 0, sd = 1)
   b3<-rtruncnorm(q, a=0, b=1.5, mean = 0, sd = 1)
   b4<-rtruncnorm(q, a=1.5, b=3, mean = 0, sd = 1)
-  #存数据
+  #
   N_sample = ceiling((nrun - burn)/thin)
   H_hat = rep(NA,nrun)
   Z_hat = list()
@@ -91,7 +91,7 @@ joint_item_Y = function(A,Y,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,
     #update alpha
     Z_temp = Z %*% t(Z)
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -257,7 +257,7 @@ joint_item_Y = function(A,Y,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,
 # alpha0 = 1
 # alpha1 = 5*10^(-4)
 # alpha_l = -0.5
-# alpha_u = 0.5#保证网络的密度大于0.5
+# alpha_u = 0.5#
 # B_l = 1
 # B_u = 2
 # library(truncnorm)

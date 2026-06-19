@@ -7,7 +7,7 @@ network_nomal = function(A,Y,nrun,burn,thin,delta_n, alpha_H,a_sig,b_sig,a_theta
   n = dim(A)[1]
   q = dim(Y)[2]
   u<-runif(nrun)
-  #初始化
+
   H = Hmax + 1
   Hstar = Hmax
   alpha = rnorm(n)
@@ -18,14 +18,14 @@ network_nomal = function(A,Y,nrun,burn,thin,delta_n, alpha_H,a_sig,b_sig,a_theta
   zta = rep(1,H)
   gamma_Y = rep(1,q)
   B = matrix(rnorm(H * q),nrow = H, ncol = q)
-  #生成一个下三角矩阵
+
   for (i in 2:H) {
     for (j in 1:(i-1)) {
       B[i,j] = 0
     }
   }
   inv_sigma = rep(1,q)
-  #一些结果,后续可能会根据需求改变
+
   H_hat = rep(NA,nrun)
   N_sample = ceiling((nrun - burn)/thin)
   alpha_hat = matrix(0,N_sample,n) 
@@ -41,7 +41,7 @@ network_nomal = function(A,Y,nrun,burn,thin,delta_n, alpha_H,a_sig,b_sig,a_theta
     #update alpha
     Z_temp = Z %*% t(Z)
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -102,12 +102,12 @@ network_nomal = function(A,Y,nrun,burn,thin,delta_n, alpha_H,a_sig,b_sig,a_theta
     #sigma_gamma = diag(1 / (n * inv_sigma + 1))
     #si_g = 1 / (n * rep(1,q) + 1)
     si_g = 1 / (n * inv_sigma + 1/100)
-    sigma_gamma = diag(si_g)##此处默认gamma先验的方差为n，后续可能会改动
+    sigma_gamma = diag(si_g)#
     #u_gamma_temp = Y - Z %*% B
     u_gamma = inv_sigma * si_g * (apply(Y - Z %*% B, 2, sum))
     gamma_Y = mvrnorm(1, u_gamma, sigma_gamma)
     #print(gamma_Y)
-    #update B 一个下三角矩阵的估计
+    #update B 
     for(j in 1:q){
       if(j<H){
         sigma_Bj = chol2inv(chol(diag(j) + inv_sigma[j] * t(Z[,1:j]) %*% Z[,1:j]))

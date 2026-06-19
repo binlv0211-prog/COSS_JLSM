@@ -3,9 +3,6 @@ library(MASS)
 library(truncnorm)
 library(LaplacesDemon)
 
-# Y1是高斯线性模型
-# Y2是MIRT
-# Y3是GRM
 Y_mix = function(Y1,Y2,Y3,nrun,burn,thin,delta_n,alpha_H,a_sig,b_sig,a_theta_B,b_theta_B,
                  theta_inf,start_adapt,Hmax,alpha0,alpha1){
   n = dim(Y1)[1]
@@ -33,7 +30,7 @@ Y_mix = function(Y1,Y2,Y3,nrun,burn,thin,delta_n,alpha_H,a_sig,b_sig,a_theta_B,b
   gamma1 = rep(1,q1)
   gamma2 = rep(1,q2)
   
-  Phi = matrix(1,n,q3)#文章中的Z
+  Phi = matrix(1,n,q3)#
   W = matrix(1,n,q3)
   b1<-rtruncnorm(q3, a=-3, b=-1.5, mean = 0, sd = 1)
   b2<-rtruncnorm(q3, a=-1.5, b=0, mean = 0, sd = 1)
@@ -171,7 +168,7 @@ Y_mix = function(Y1,Y2,Y3,nrun,burn,thin,delta_n,alpha_H,a_sig,b_sig,a_theta_B,b
     }
     
     si_g1 = 1 / (n * inv_sigma + 1/100)
-    sigma_gamma1 = diag(si_g1)##此处默认gamma先验的方差为n，后续可能会改动
+    sigma_gamma1 = diag(si_g1)#
     #u_gamma_temp = Y - Z %*% B
     u_gamma1 = inv_sigma * si_g1 * (apply(Y1 - Z %*% B1, 2, sum))
     gamma1 = mvrnorm(1, u_gamma1, sigma_gamma1)    

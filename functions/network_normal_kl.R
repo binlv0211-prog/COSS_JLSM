@@ -31,7 +31,7 @@ network_normal_kf = function(A,Y,H,a_sig,b_sig,nrun,burn,thin){
     #update alpha
     Z_temp = Z %*% t(Z)
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -47,12 +47,12 @@ network_normal_kf = function(A,Y,H,a_sig,b_sig,nrun,burn,thin){
       Z[i,] = mvrnorm(1,u_Zi,Sigma_Zi)
     }
     si_g = 1 / (n * inv_sigma + 1/100)
-    sigma_gamma = diag(si_g)##此处默认gamma先验的方差为n，后续可能会改动
+    sigma_gamma = diag(si_g)##
     #u_gamma_temp = Y - Z %*% B
     u_gamma = inv_sigma * si_g * (apply(Y - Z %*% B, 2, sum))
     gamma_Y = mvrnorm(1, u_gamma, sigma_gamma)
     #print(gamma_Y)
-    #update B 一个下三角矩阵的估计
+    #update B 
     for(j in 1:q){
       if(j<H){
         sigma_Bj = chol2inv(chol(diag(j) + inv_sigma[j] * t(Z[,1:j]) %*% Z[,1:j]))
@@ -103,13 +103,13 @@ network_normal_kf0 = function(A,Y,a_sig,b_sig,nrun,burn,thin){
     D_A = matrix(pgdraw(1, theta_A), nrow = n,ncol = n)
     D_A = (D_A + t(D_A)) / 2
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha)
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
     }
     si_g = 1 / (n * inv_sigma + 1/100)
-    sigma_gamma = diag(si_g)##此处默认gamma先验的方差为n，后续可能会改动
+    sigma_gamma = diag(si_g)
     #u_gamma_temp = Y - Z %*% B
     u_gamma = inv_sigma * si_g * (apply(Y, 2, sum))
     gamma_Y = mvrnorm(1, u_gamma, sigma_gamma)
@@ -146,7 +146,7 @@ network_normal_kf_getZ = function(A,Y,gamma_Y,inv_sigma,B,nrun,burn,thin){
     #update alpha
     Z_temp = Z %*% t(Z)
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -183,7 +183,7 @@ network_normal_kf0_getalpha = function(A,Y,gamma_Y,nrun,burn,thin){
     D_A = (D_A + t(D_A)) / 2 
     #update alpha
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha)
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))

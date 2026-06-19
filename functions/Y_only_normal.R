@@ -7,7 +7,7 @@ normal_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,alpha_H,a_sig,b_sig,a_the
   n = dim(Y)[1]
   q = dim(Y)[2]
   u<-runif(nrun)
-  #初始化
+  #
   H = Hmax + 1
   Hstar = Hmax
   Z = matrix(rnorm(n * H),nrow = n,ncol = H)
@@ -23,7 +23,7 @@ normal_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,alpha_H,a_sig,b_sig,a_the
     }
   }
   inv_sigma = rep(1,q)
-  #一些结果,后续可能会根据需求改变
+  #
   H_hat = rep(NA,nrun)
   N_sample = ceiling((nrun - burn)/thin)
   gamma_hat = matrix(0,N_sample,q)
@@ -39,7 +39,7 @@ normal_Y_only_1212 = function(Y,nrun,burn,thin,delta_n,alpha_H,a_sig,b_sig,a_the
       Z[i,] = mvrnorm(1,u_Zi,Sigma_Zi)
     }
     si_g1 = 1 / (n * inv_sigma + 1/100)
-    sigma_gamma = diag(si_g1)##此处默认gamma先验的方差为n，后续可能会改动
+    sigma_gamma = diag(si_g1)##
     u_gamma_temp = Y - Z %*% B
     u_gamma = inv_sigma * si_g1 * (apply(u_gamma_temp, 2, sum))
     gamma_Y = mvrnorm(1, u_gamma, sigma_gamma)

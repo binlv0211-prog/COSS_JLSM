@@ -5,13 +5,13 @@ library(LaplacesDemon)
 
 safe_max <- function(x) {
   x_clean <- x[!is.na(x)]
-  if (length(x_clean) == 0) return(-10) # 如果没样本，给一个合理的低位初始界限
+  if (length(x_clean) == 0) return(-10) #
   return(max(x_clean))
 }
 
 safe_min <- function(x) {
   x_clean <- x[!is.na(x)]
-  if (length(x_clean) == 0) return(10) # 如果没样本，给一个合理的高位初始界限
+  if (length(x_clean) == 0) return(10) # 
   return(min(x_clean))
 }
 
@@ -68,10 +68,10 @@ get_item_Y3 = function(Z,B,b1,b2,b3){
   }
   return(Y)
 }
-# Y1是五分类 缺失
-# Y2是3分类
-# Y3是四类 缺失
-# Y4是两类
+# Y1 is five item
+# Y2 is  three item with missing
+# Y3 is four item with missing
+# Y4 is binary
 
 network_mix_real_data = function(A,Y1,Y2,Y3,Y4,MissY1,MissY3,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,a_sig,b_sig,
                                  theta_inf,Hmax,start_adapt,alpha0,alpha1){
@@ -98,19 +98,19 @@ network_mix_real_data = function(A,Y1,Y2,Y3,Y4,MissY1,MissY3,nrun,burn,thin,delt
   B3 = matrix(rnorm(H * q3),nrow = H, ncol = q3)
   B4 = matrix(rnorm(H * q4),nrow = H, ncol = q4)
   
-  Phi1 = matrix(1,n,q1)#文章中的Z
+  Phi1 = matrix(1,n,q1)#
   W1 = matrix(1,n,q1)
   b11<-rtruncnorm(q1, a=-3, b=-1.5, mean = 0, sd = 1)
   b12<-rtruncnorm(q1, a=-1.5, b=0, mean = 0, sd = 1)
   b13<-rtruncnorm(q1, a=0, b=1.5, mean = 0, sd = 1)
   b14<-rtruncnorm(q1, a=1.5, b=3, mean = 0, sd = 1)  
   
-  Phi2 = matrix(1,n,q2)#文章中的Z
+  Phi2 = matrix(1,n,q2)#
   W2 = matrix(1,n,q2)
   b21<-rtruncnorm(q2, a=-3, b=0, mean = 0, sd = 1)
   b22<-rtruncnorm(q2, a=0, b=3, mean = 0, sd = 1)
   
-  Phi3 = matrix(1,n,q3)#文章中的Z
+  Phi3 = matrix(1,n,q3)#
   W3 = matrix(1,n,q3)
   b31<-rtruncnorm(q3, a=-3, b=-1, mean = 0, sd = 1)
   b32<-rtruncnorm(q3, a=-1, b=1, mean = 0, sd = 1)
@@ -208,7 +208,7 @@ network_mix_real_data = function(A,Y1,Y2,Y3,Y4,MissY1,MissY3,nrun,burn,thin,delt
     Z_temp = Z %*% t(Z)
     #update alpha
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -524,19 +524,19 @@ network_mix_real_data_kf = function(A,Y1,Y2,Y3,Y4,MissY1,MissY3,H,nrun,burn,thin
   B3 = matrix(rnorm(H * q3),nrow = H, ncol = q3)
   B4 = matrix(rnorm(H * q4),nrow = H, ncol = q4)
   
-  Phi1 = matrix(1,n,q1)#文章中的Z
+  Phi1 = matrix(1,n,q1)#
   W1 = matrix(1,n,q1)
   b11<-rtruncnorm(q1, a=-3, b=-1.5, mean = 0, sd = 1)
   b12<-rtruncnorm(q1, a=-1.5, b=0, mean = 0, sd = 1)
   b13<-rtruncnorm(q1, a=0, b=1.5, mean = 0, sd = 1)
   b14<-rtruncnorm(q1, a=1.5, b=3, mean = 0, sd = 1)  
   
-  Phi2 = matrix(1,n,q2)#文章中的Z
+  Phi2 = matrix(1,n,q2)#
   W2 = matrix(1,n,q2)
   b21<-rtruncnorm(q2, a=-3, b=0, mean = 0, sd = 1)
   b22<-rtruncnorm(q2, a=0, b=3, mean = 0, sd = 1)
   
-  Phi3 = matrix(1,n,q3)#文章中的Z
+  Phi3 = matrix(1,n,q3)#
   W3 = matrix(1,n,q3)
   b31<-rtruncnorm(q3, a=-3, b=-1, mean = 0, sd = 1)
   b32<-rtruncnorm(q3, a=-1, b=1, mean = 0, sd = 1)
@@ -634,7 +634,7 @@ network_mix_real_data_kf = function(A,Y1,Y2,Y3,Y4,MissY1,MissY3,H,nrun,burn,thin
     Z_temp = Z %*% t(Z)
     #update alpha
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -937,7 +937,7 @@ network_mix_real_data_kf_getZ = function(A,Y1,Y2,Y3,Y4,MissY1,MissY3,B1,B2,B3,B4
     Z_temp = Z %*% t(Z)
     #update alpha
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -990,76 +990,7 @@ network_mix_real_data_kf_getZ = function(A,Y1,Y2,Y3,Y4,MissY1,MissY3,B1,B2,B3,B4
   return(output)  
 }
 
-# # 为每个数据文件创建单独的环境
-# friendship_env <- new.env()
-# demographic_env <- new.env()
-# substances_env <- new.env()
-# various_env <- new.env()
-# lifestyle_env <- new.env()
-# geographic_env <- new.env()
-# selections_env <- new.env()
-# # 加载到各自的环境
-# load("C:/Users/33701/Desktop/毕业论文/实际数据/Glasgow_data/Glasgow-friendship.RData", envir = friendship_env)
-# load("C:/Users/33701/Desktop/毕业论文/实际数据/Glasgow_data/Glasgow-demographic.RData", envir = demographic_env)
-# load("C:/Users/33701/Desktop/毕业论文/实际数据/Glasgow_data/Glasgow-substances.RData", envir = substances_env)
-# load("C:/Users/33701/Desktop/毕业论文/实际数据/Glasgow_data/Glasgow-various.RData", envir = various_env)
-# load("C:/Users/33701/Desktop/毕业论文/实际数据/Glasgow_data/Glasgow-lifestyle.RData", envir = lifestyle_env)
-# load("C:/Users/33701/Desktop/毕业论文/实际数据/Glasgow_data/Glasgow-geographic.RData", envir = geographic_env)
-# load("C:/Users/33701/Desktop/毕业论文/实际数据/Glasgow_data/Glasgow-selections.RData", envir = selections_env)
-# selections = selections_env$selection129
-# n = sum(selections)
-# 
-# F1 = friendship_env$friendship.1[selections,selections]
-# A = matrix(0,n,n)
-# for (i in 1:n) {
-#   for (j in 1:n) {
-#     if(F1[i,j] + F1[j,i] > 0){A[i,j] = 1}
-#   }
-# }
-# Y1 = matrix(substances_env$alcohol[selections,1],n,1) # k=5
-# q1 = dim(Y1)[2]
-# MissY1 = matrix(0,n,q1)
-# MissY1[is.na(Y1)] = 1
-# Y1[is.na(Y1)] = 1
-# Y2 = matrix(substances_env$tobacco[selections,1],n,1)
-# Y3 = cbind(substances_env$cannabis[selections,1],lifestyle_env$leisure1[selections,]) # k=4
-# q3 = dim(Y3)[2]
-# MissY3 = matrix(0,n,q3)
-# MissY3[is.na(Y3)] = 1
-# Y3[is.na(Y3)] = 1
-# Y4 = lifestyle_env$music1[selections,]
-# 
-# net_Y_out = network_mix_real_data_kf(A,Y1,Y2,Y3,Y4,MissY1,MissY3,H = 5,nrun = 10,burn = 3,thin = 1)
-# 
-# 
-# 
-# B1 = matrix(rnorm(H * q1),nrow = H, ncol = q1)
-# B2 = matrix(rnorm(H * q2),nrow = H, ncol = q2)
-# B3 = matrix(rnorm(H * q3),nrow = H, ncol = q3)
-# B4 = matrix(rnorm(H * q4),nrow = H, ncol = q4)
-# 
-# Phi1 = matrix(1,n,q1)#文章中的Z
-# W1 = matrix(1,n,q1)
-# b11<-rtruncnorm(q1, a=-3, b=-1.5, mean = 0, sd = 1)
-# b12<-rtruncnorm(q1, a=-1.5, b=0, mean = 0, sd = 1)
-# b13<-rtruncnorm(q1, a=0, b=1.5, mean = 0, sd = 1)
-# b14<-rtruncnorm(q1, a=1.5, b=3, mean = 0, sd = 1)  
-# 
-# Phi2 = matrix(1,n,q2)#文章中的Z
-# W2 = matrix(1,n,q2)
-# b21<-rtruncnorm(q2, a=-3, b=0, mean = 0, sd = 1)
-# b22<-rtruncnorm(q2, a=0, b=3, mean = 0, sd = 1)
-# 
-# Phi3 = matrix(1,n,q3)#文章中的Z
-# W3 = matrix(1,n,q3)
-# b31<-rtruncnorm(q3, a=-3, b=-1, mean = 0, sd = 1)
-# b32<-rtruncnorm(q3, a=-1, b=1, mean = 0, sd = 1)
-# b33<-rtruncnorm(q3, a=1, b=3, mean = 0, sd = 1)
-# 
-# gamma4 = rep(1,q4)
-# 
-# net_Y_out = network_mix_real_data_kf_getZ(A,Y1,Y2,Y3,Y4,MissY1,MissY3,B1,B2,B3,B4,b11,b12,b13,
-#                                           b14,b21,b22,b31,b32,b33,gamma4,H = 5,nrun = 10,burn = 1,thin = 1)
+
 
 get_loglikehood_A = function(A,alpha,Z){
   n = nrow(A)
@@ -1259,9 +1190,8 @@ get_loglikehood_point_Y4 = function(Y,gamma_Y,B,Z){
   return((L_Y))
 }
 
-# 辅助函数：安全计算 log(mean(exp(x)))
+
 log_mean_exp <- function(x) {
-  # x 是一个向量（某个点在所有 MCMC 迭代中的对数似然）
   max_x <- max(x)
   return(max_x + log(mean(exp(x - max_x))))
 }
@@ -1277,7 +1207,6 @@ get_WAIC_data3 = function(A, Y1, Y2, Y3, Y4, MissY1, MissY3,
   k = dim(Z_mcmc)[3]
   len = dim(alpha_mcmc)[1]
   
-  # 初始化存储空间
   L_A = array(NA, c(len, n, n))
   L_Y1 = array(NA, c(len, n, q1))
   L_Y2 = array(NA, c(len, n, q2))
@@ -1287,7 +1216,6 @@ get_WAIC_data3 = function(A, Y1, Y2, Y3, Y4, MissY1, MissY3,
   for (i in 1:len) {
     Zi = matrix(Z_mcmc[i, , ], n, k)
     
-    # 计算各个部分的对数似然矩阵
     L_A[i,,] = get_loglikehood_point_A(A, alpha_mcmc[i,], Zi)
     L_Y1[i,,] = get_loglikehood_point_Y1(Y1, MissY1, b11_mcmc[i,], b12_mcmc[i,], b13_mcmc[i,], b14_mcmc[i,], matrix(B1_mcmc[i,,], k, q1), Zi)
     L_Y2[i,,] = get_loglikehood_point_Y2(Y2, b21_mcmc[i,], b22_mcmc[i,], matrix(B2_mcmc[i,,], k, q2), Zi)
@@ -1295,13 +1223,10 @@ get_WAIC_data3 = function(A, Y1, Y2, Y3, Y4, MissY1, MissY3,
     L_Y4[i,,] = get_loglikehood_point_Y4(Y4, gamma4_mcmc[i,], matrix(B4_mcmc[i,,], k, q4), Zi)
   }
   
-  # 计算 lppd (使用 Log-Sum-Exp)
   calc_lppd <- function(L_array) {
-    # 对第一维（MCMC迭代层）应用 log_mean_exp
     apply(L_array, c(2, 3), log_mean_exp)
   }
   
-  # 计算 pwaic (方差)
   calc_pwaic <- function(L_array) {
     apply(L_array, c(2, 3), var)
   }
@@ -1312,13 +1237,9 @@ get_WAIC_data3 = function(A, Y1, Y2, Y3, Y4, MissY1, MissY3,
   lppd_Y3 = calc_lppd(L_Y3); pwaic_Y3 = calc_pwaic(L_Y3)
   lppd_Y4 = calc_lppd(L_Y4); pwaic_Y4 = calc_pwaic(L_Y4)
   
-  # 汇总 WAIC
-  # A 矩阵通常只取上三角（排除自环和重复计数）
   ut = upper.tri(lppd_A, diag = FALSE)
   wa = sum(lppd_A[ut]) - sum(pwaic_A[ut])
   
-  # Y 矩阵求和 (排除 Missing 导致的 0/NA)
-  # 注意：在 get_loglikehood 中，MissY 对应位已设为 0，需在求和时处理
   sum_valid <- function(lppd, pwaic) {
     valid = !is.infinite(lppd) & !is.na(lppd) & (lppd != 0)
     sum(lppd[valid]) - sum(pwaic[valid])
@@ -1342,10 +1263,10 @@ get_DIC_data3 = function(A, Y1, Y2, Y3, Y4, MissY1, MissY3,
   q2 = dim(Y2)[2]
   q3 = dim(Y3)[2]
   q4 = dim(Y4)[2]
-  k = dim(Z_mcmc)[3]  # 使用 Z_mcmc 计算 k
+  k = dim(Z_mcmc)[3]  
   len = dim(alpha_mcmc)[1]
   
-  # 计算后验均值
+
   alpha_mean = apply(alpha_mcmc, 2, mean)
   b11_mean = apply(b11_mcmc, 2, mean)
   b12_mean = apply(b12_mcmc, 2, mean)
@@ -1363,7 +1284,6 @@ get_DIC_data3 = function(A, Y1, Y2, Y3, Y4, MissY1, MissY3,
   B3_mean = apply(B3_mcmc, c(2,3), mean)
   B4_mean = apply(B4_mcmc, c(2,3), mean)
   
-  # 使用均值计算 D_hat
   L_AY_mean = get_loglikehood_data3(A, Y1, Y2, Y3, Y4, MissY1, MissY3,
                                     b11_mean, b12_mean, b13_mean, b14_mean, 
                                     b21_mean, b22_mean, b31_mean, b32_mean, b33_mean,
@@ -1371,7 +1291,6 @@ get_DIC_data3 = function(A, Y1, Y2, Y3, Y4, MissY1, MissY3,
                                     alpha_mean, Z_mean)
   D_hat = -2 * L_AY_mean
   
-  # 计算每个MCMC样本的偏差
   bar_D = numeric(len)
   for (i in 1:len) {
     alphai = alpha_mcmc[i, ]

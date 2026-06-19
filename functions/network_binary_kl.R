@@ -32,7 +32,7 @@ network_briny_kf = function(A,Y,H,nrun,burn,thin){
     #update alpha
     Z_temp = Z %*% t(Z)
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -96,7 +96,7 @@ network_briny_kf0 = function(A,Y,nrun,burn,thin){
     theta_Y = (matrix(1,n,1) %*% matrix(gamma_Y,1,q))
     D_Y = matrix(pgdraw(1,theta_Y),nrow = n,ncol = q)
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha)
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -136,7 +136,7 @@ network_briny_kf_getZ = function(A,Y,gamma_Y,B,nrun,burn,thin){
     D_Y = matrix(pgdraw(1,theta_Y),nrow = n,ncol = q)
     Z_temp = Z %*% t(Z)
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -177,7 +177,7 @@ network_briny_kf0_getalpha = function(A,Y,gamma_Y,nrun,burn,thin){
     theta_Y = (matrix(1,n,1) %*% matrix(gamma_Y,1,q))
     D_Y = matrix(pgdraw(1,theta_Y),nrow = n,ncol = q)
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha)
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))

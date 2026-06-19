@@ -3,9 +3,9 @@ library(MASS)
 library(truncnorm)
 library(LaplacesDemon)
 
-# Y1是高斯线性模型
-# Y2是MIRT
-# Y3是GRM
+# Y1 is LRT
+# Y2 is MIRT
+# Y3 is GRM
 network_mix = function(A,Y1,Y2,Y3,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta,a_sig,b_sig,
                        theta_inf,Hmax,start_adapt,alpha0,alpha1){
   n = dim(Y1)[1]
@@ -104,7 +104,7 @@ network_mix = function(A,Y1,Y2,Y3,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta
     Z_temp = Z %*% t(Z)
     #update alpha
     for(i in 1:n){
-      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)#此处默认alpha先验的方差为1，后续可能会改动
+      sigma_alphai = 1 / (sum(D_A[i,]) - D_A[i,i] + 1/100)
       u_temp = A[i,] - 0.5 - D_A[i,] * (alpha + Z_temp[i,])
       u_alphai = sigma_alphai * (sum(u_temp) - u_temp[i])
       alpha[i] = rnorm(1,u_alphai,sqrt(sigma_alphai))
@@ -201,7 +201,7 @@ network_mix = function(A,Y1,Y2,Y3,nrun,burn,thin,delta_n,alpha_H,a_theta,b_theta
     }    
     
     si_g1 = 1 / (n * inv_sigma + 1/100)
-    sigma_gamma1 = diag(si_g1)##此处默认gamma先验的方差为n，后续可能会改动
+    sigma_gamma1 = diag(si_g1)#
     #u_gamma_temp = Y - Z %*% B
     u_gamma1 = inv_sigma * si_g1 * (apply(Y1 - Z %*% B1, 2, sum))
     gamma1 = mvrnorm(1, u_gamma1, sigma_gamma1)    
